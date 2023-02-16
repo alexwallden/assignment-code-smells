@@ -3,7 +3,7 @@
 */
 export enum Sort {
   PRICE_ASCENDING = "Stigande pris",
-  PRICE_DECENDING = "Sjunkande pris",
+  PRICE_DESCENDING = "Sjunkande pris",
   NAME_ALPHABETIC = "Alfabetisk ordning",
   NAME_ALPHABETIC_REVERSE = "Omvänd alfabetisk ordning",
 }
@@ -15,48 +15,32 @@ export class Product {
     public imageUrl: string[],
     public price: number,
     public description: string
-  ) {
-    this.id = id;
-    this.name = name;
-    this.imageUrl = imageUrl;
-    this.price = price;
-    this.description = description;
-  }
+  ) { }
 }
 
 export function sortProductsBy(sort: Sort, products: Product[]): Product[] {
-  let copiedList: Product[] = [];
-  products.forEach((product) => copiedList.push(product));
+  const copiedList: Product[] = [...products];
 
-  let sortedList: Product[] = [];
-  if (sort === Sort.PRICE_ASCENDING) {
-    sortedList = sortList("Price", copiedList);
-    sortedList.reverse();
-  } else if (sort === Sort.PRICE_DECENDING) {
-    sortedList = sortList("Price", copiedList);
-  } else if (sort === Sort.NAME_ALPHABETIC) {
-    sortedList = sortList("Name", copiedList);
-  } else if (sort === Sort.NAME_ALPHABETIC_REVERSE) {
-    sortedList = sortList("Name", copiedList);
-    sortedList.reverse();
+  switch (sort) {
+    case Sort.PRICE_ASCENDING:
+      return sortList("Price", copiedList).reverse();
+    case Sort.PRICE_DESCENDING:
+      return sortList("Price", copiedList);
+    case Sort.NAME_ALPHABETIC:
+      return sortList("Name", copiedList);
+    case Sort.NAME_ALPHABETIC_REVERSE:
+      return sortList("Name", copiedList).reverse();
   }
-
-  return sortedList;
 }
 
 function sortList(whichAttribute: string, products: Product[]): Product[] {
   return products.sort((p1, p2) => {
     if (whichAttribute === "Price") {
-      if (p1.price < p2.price) {
-        return 1;
-      } else if (p1.price > p2.price) {
-        return -1;
-      }
-      return 0;
+      return p2.price - p1.price
     } else {
-      if (p1.name < p2.name) {
+      if (p1.name.toUpperCase() > p2.name.toUpperCase()) {
         return 1;
-      } else if (p1.name > p2.name) {
+      } else if (p1.name.toUpperCase() < p2.name.toUpperCase()) {
         return -1;
       }
       return 0;
@@ -67,6 +51,141 @@ function sortList(whichAttribute: string, products: Product[]): Product[] {
 /*
   2. Refaktorera funktionen createProductHtml :)
   */
+// class Cart {
+//   addToCart(i: number) { }
+// }
+// interface CartItem {
+//   picture: string;
+//   pictureAlt: string;
+//   name: string;
+//   price: number;
+//   info: string;
+//   productSpec: boolean;
+//   category: string;
+// }
+// export let cartList = JSON.parse(localStorage.getItem("savedCartList") || "[]");
+// export let productList = JSON.parse(localStorage.getItem("savedList") || "[]");
+
+// export function createProductHtml() {
+//   let quantity = 0;
+//   for (let i = 0; i < cartList.length; i++) {
+//     quantity += cartList[i].quantity;
+//   }
+//   let floatingCart = document.getElementById(
+//     "floatingcartnumber"
+//   ) as HTMLElement;
+//   floatingCart.innerHTML = "" + quantity;
+
+//   function createCartSymbolHtml() {
+//     let cartSymbolContainer: HTMLDivElement = document.createElement("div");
+//     cartSymbolContainer.className = "cartSymbolContainer";
+    
+//     let cartSymbol: HTMLElement = document.createElement("i");
+//     cartSymbol.className = "bi bi-bag-plus";
+//     cartSymbolContainer.appendChild(cartSymbol);
+
+//     return cartSymbolContainer
+//   }
+ 
+
+//   function createDogHtml(product: CartItem, container: HTMLElement) {
+//     let dogProduct: HTMLDivElement = document.createElement("div");
+//     let dogImgContainer: HTMLDivElement = document.createElement("div");
+//     dogImgContainer.className = "dogimgcontainer";
+//     dogProduct.appendChild(dogImgContainer);
+
+//     let dogImg: HTMLImageElement = document.createElement("img");
+//     dogImg.src = product.picture;
+//     dogImg.alt = product.pictureAlt;
+
+//     const cartSymbolContainer = createCartSymbolHtml();
+//     dogImgContainer.appendChild(cartSymbolContainer);
+
+//     dogImg.addEventListener("mouseover", () => {
+//       cartSymbolContainer.classList.add("hover");
+//       dogImg.classList.add("hover");
+//     });
+
+//     dogImg.addEventListener("mouseout", () => {
+//       dogImg.classList.remove("hover");
+//       cartSymbolContainer.classList.remove("hover");
+//     });
+
+//     dogImgContainer.appendChild(dogImg);
+
+//     return dogProduct
+//   }
+//   function createProductName(product: CartItem) {
+//     const name: HTMLHeadingElement = document.createElement('h5');
+//     name.innerHTML = product.name;
+
+//     return name;
+//   }
+   
+
+//   for (let i = 0; i < productList.length; i++) {
+    
+//     const name = createProductHtml(productList[i]);
+
+
+    
+//     dogproduct.appendChild(name);
+
+//     let price: HTMLHeadingElement = document.createElement("p");
+//     price.innerHTML = "$" + productList[i].price;
+//     dogproduct.appendChild(price);
+
+//     let info: HTMLHeadingElement = document.createElement("p");
+//     info.innerHTML = productList[i].info;
+//     dogproduct.appendChild(info);
+
+//     productList[i].productSpec = false;
+
+//     dogImg.addEventListener("click", () => {
+//       productList[i].productSpec = !productList[i].productSpec;
+//       window.location.href = "product-spec.html#backArrow";
+//       let listastext = JSON.stringify(productList);
+//       localStorage.setItem("savedList", listastext);
+//     });
+
+//     cartSymbol.addEventListener("click", () => {
+//       let cart = new Cart();
+//       cart.addToCart(i);
+//     });
+
+//     if (productList[i].category === "sassy") {
+//       let cat1: HTMLElement = document.getElementById("sassy") as HTMLElement;
+//       dogproduct.className = "dogproduct";
+//       cat1.appendChild(dogproduct);
+//     }
+//     if (productList[i].category === "kriminella") {
+//       let cat2: HTMLElement = document.getElementById(
+//         "kriminella"
+//       ) as HTMLElement;
+//       dogproduct.className = "dogproduct";
+//       cat2.appendChild(dogproduct);
+//     }
+//     if (productList[i].category == "singlar") {
+//       let cat3: HTMLElement = document.getElementById("singlar") as HTMLElement;
+//       dogproduct.className = "dogproduct";
+//       cat3.appendChild(dogproduct);
+//     }
+//     if (productList[i].category === "puppy") {
+//       let cat4: HTMLElement = document.getElementById("puppy") as HTMLElement;
+//       dogproduct.className = "dogproduct";
+//       cat4.appendChild(dogproduct);
+//     }
+//     if (productList[i].category === "oldies") {
+//       let cat5: HTMLElement = document.getElementById("oldies") as HTMLElement;
+//       dogproduct.className = "dogproduct";
+//       cat5.appendChild(dogproduct);
+//     }
+//   }
+//   let listastext = JSON.stringify(productList);
+//   localStorage.setItem("savedList", listastext);
+//   sessionStorage.clear();
+// }
+
 class Cart {
   addToCart(i: number) {}
 }
@@ -180,10 +299,10 @@ export class CartProduct {
     public image: string,
     public price: number,
     public amount: number
-  ) {}
+  ) { }
 }
 
-function getfromstorage() {
+export default function getfromstorage() {
   let container = document.getElementById("checkout-table");
 
   let fromstorage: string = localStorage.getItem("cartArray") || "";
@@ -219,7 +338,7 @@ function getfromstorage() {
   checkkouttotal2.appendChild(totaltext);
   totaltext.innerHTML = "total:";
 
-  for (let i: number = 0; i < astext.length; i++) {
+  for (let i = 0; i < astext.length; i++) {
     let productt: HTMLTableCellElement = document.createElement("th");
     titlecontainer.appendChild(productt);
     productt.innerHTML = astext[i].name;
@@ -251,7 +370,7 @@ function getfromstorage() {
     amountminusbtn.className = "minusbtn";
   }
 
-  let addition: number = 0;
+  let addition = 0;
 
   for (let i = 0; i < astext.length; i++) {
     addition += astext[i].price *= astext[i].amount;
