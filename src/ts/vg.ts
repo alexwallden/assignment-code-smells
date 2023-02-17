@@ -51,9 +51,6 @@ function sortList(whichAttribute: string, products: Product[]): Product[] {
 /*
   2. Refaktorera funktionen createProductHtml :)
   */
-// class Cart {
-//   addToCart(i: number) { }
-// }
 interface CartItem {
   picture: string;
   pictureAlt: string;
@@ -171,26 +168,26 @@ export function createProductHtml() {
 
     productList[i].productSpec = false;
 
-    switch(productList[i].category) {
+    switch (productList[i].category) {
       case "sassy":
         (document.getElementById("sassy") as HTMLElement).appendChild(dogProduct);
-      break;
+        break;
       case "kriminella":
         (document.getElementById("kriminella") as HTMLElement).appendChild(dogProduct);
-      break;
+        break;
       case "singlar":
         (document.getElementById("singlar") as HTMLElement).appendChild(dogProduct);
-      break;
+        break;
       case "puppy":
         (document.getElementById("puppy") as HTMLElement).appendChild(dogProduct);
-      break;
+        break;
       case "oldies":
         (document.getElementById("oldies") as HTMLElement).appendChild(dogProduct);
-      break;
+        break;
     }
   }
-  const listAsText = JSON.stringify(productList);
-  localStorage.setItem("savedList", listAsText);
+
+  localStorage.setItem("savedList", JSON.stringify(productList));
   sessionStorage.clear();
 }
 
@@ -206,82 +203,85 @@ export class CartProduct {
   ) { }
 }
 
-export default function getfromstorage() {
-  let container = document.getElementById("checkout-table");
+function createTableHeader(text: string, className?: string) {
+  const tableHeader: HTMLTableCellElement = document.createElement('th');
+  tableHeader.innerHTML = text;
+  if (className) tableHeader.className = className;
 
-  let fromstorage: string = localStorage.getItem("cartArray") || "";
-  let astext: CartProduct[] = JSON.parse(fromstorage);
+  return tableHeader
+}
 
-  let productcontainer = document.getElementById(
-    "product-ckeckout-container"
+function createQtyBtn(label: string) {
+  const button: HTMLButtonElement = document.createElement("button");
+  button.className = `${label}-btn`;
+
+  const buttonIcon: HTMLSpanElement = document.createElement('i');
+  buttonIcon.className = `fas fa-${label}`;
+  button.appendChild(buttonIcon)
+
+  return button;
+}
+
+export default function getFromStorage() {
+  const container = document.getElementById("checkout-table");
+
+  const cartListFromStorage: string = localStorage.getItem("cartArray") || "";
+  const cartList: CartProduct[] = JSON.parse(cartListFromStorage);
+
+  const productCheckOutContainer = document.getElementById(
+    "product-checkout-container"
+  ) as HTMLDivElement;  
+
+  const amountCheckoutContainer = document.getElementById(
+    "amount-checkout-container"
   ) as HTMLDivElement;
+  const amountTitle: HTMLTableCellElement = createTableHeader('amount:');
+  amountCheckoutContainer.appendChild(amountTitle);
 
-  let amountcontainer = document.getElementById(
-    "amount-checkout-container2"
-  ) as HTMLDivElement;
-  let amounttext: HTMLTableCellElement = document.createElement("th");
-  amountcontainer.appendChild(amounttext);
-  amounttext.innerHTML = "amount:";
-
-  let titlecontainer = document.getElementById(
+  const titleContainer = document.getElementById(
     "title-container"
   ) as HTMLTableRowElement;
-  titlecontainer.innerHTML = "<strong>products:</strong>";
+  titleContainer.innerHTML = "<strong>products:</strong>";
 
-  let productquantity = document.getElementById(
+  const quantityContainer = document.getElementById(
     "product-quantity"
   ) as HTMLTableRowElement;
-  let qttext: HTMLTableCellElement = document.createElement("th");
-  productquantity.appendChild(qttext);
-  qttext.innerHTML = "change quantity:";
+  const changeQuantityTitle: HTMLTableCellElement = createTableHeader('change quantity:')
+  quantityContainer.appendChild(changeQuantityTitle);
 
-  let checkkouttotal2 = document.getElementById(
+  const checkOutTotalContainer = document.getElementById(
     "title-total"
   ) as HTMLTableCellElement;
-  let totaltext: HTMLTableCellElement = document.createElement("th");
-  checkkouttotal2.appendChild(totaltext);
-  totaltext.innerHTML = "total:";
+  const checkoutTotalTitle: HTMLTableCellElement = createTableHeader('total:');
+  checkOutTotalContainer.appendChild(checkoutTotalTitle);
 
-  for (let i = 0; i < astext.length; i++) {
-    let productt: HTMLTableCellElement = document.createElement("th");
-    titlecontainer.appendChild(productt);
-    productt.innerHTML = astext[i].name;
-    productt.className = "hej";
+  for (let i = 0; i < cartList.length; i++) {
+    const productNameElement: HTMLTableCellElement = createTableHeader(cartList[i].name, "product-name");
+    titleContainer.appendChild(productNameElement);
 
-    let amountt: HTMLTableCellElement = document.createElement("th");
-    amountcontainer.appendChild(amountt);
-    amountt.innerHTML = "x" + astext[i].amount;
-    amountt.className = "hej";
+    const productAmountElement: HTMLTableCellElement = createTableHeader(`x${cartList[i].amount}`, "product-amount");
+    amountCheckoutContainer.appendChild(productAmountElement);
 
-    let amountqt: HTMLTableCellElement = document.createElement("th");
-    productquantity.appendChild(amountqt);
-    let amountplusbtn: HTMLButtonElement = document.createElement("button");
-    amountqt.appendChild(amountplusbtn);
-    amountqt.className = "hej";
+    const qtyBtnsContainer: HTMLTableCellElement = document.createElement("th");
+    qtyBtnsContainer.className = "qty-btns-container";
+    quantityContainer.appendChild(qtyBtnsContainer);
 
-    let icon: HTMLSpanElement = document.createElement("i");
-    amountplusbtn.appendChild(icon);
 
-    icon.className = "fas fa-minus";
-    amountplusbtn.className = "plusbtn";
+    const qtyMinusButton: HTMLButtonElement = createQtyBtn('minus');
+    qtyBtnsContainer.appendChild(qtyMinusButton);
+    
 
-    let icon2: HTMLSpanElement = document.createElement("i");
-    icon2.className = "fas fa-plus";
-
-    let amountminusbtn: HTMLButtonElement = document.createElement("button");
-    amountqt.appendChild(amountminusbtn);
-    amountminusbtn.appendChild(icon2);
-    amountminusbtn.className = "minusbtn";
+    const qtyPlusBtn: HTMLButtonElement = createQtyBtn('plus');
+    qtyBtnsContainer.appendChild(qtyPlusBtn);
   }
 
   let addition = 0;
 
-  for (let i = 0; i < astext.length; i++) {
-    addition += astext[i].price *= astext[i].amount;
+  for (let i = 0; i < cartList.length; i++) {
+    addition += cartList[i].price *= cartList[i].amount;
   }
 
-  let totalprice2: HTMLTableCellElement = document.createElement("th");
-  checkkouttotal2.appendChild(totalprice2);
-  totalprice2.innerHTML = addition + "$";
-  totalprice2.id = "totalincenter";
+  const totalPriceElement: HTMLTableCellElement = createTableHeader(`${addition}$`);
+  totalPriceElement.id = "total-in-center";
+  checkOutTotalContainer.appendChild(totalPriceElement);
 }
