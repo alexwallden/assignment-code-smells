@@ -54,239 +54,143 @@ function sortList(whichAttribute: string, products: Product[]): Product[] {
 // class Cart {
 //   addToCart(i: number) { }
 // }
-// interface CartItem {
-//   picture: string;
-//   pictureAlt: string;
-//   name: string;
-//   price: number;
-//   info: string;
-//   productSpec: boolean;
-//   category: string;
-// }
-// export let cartList = JSON.parse(localStorage.getItem("savedCartList") || "[]");
-// export let productList = JSON.parse(localStorage.getItem("savedList") || "[]");
-
-// export function createProductHtml() {
-//   let quantity = 0;
-//   for (let i = 0; i < cartList.length; i++) {
-//     quantity += cartList[i].quantity;
-//   }
-//   let floatingCart = document.getElementById(
-//     "floatingcartnumber"
-//   ) as HTMLElement;
-//   floatingCart.innerHTML = "" + quantity;
-
-//   function createCartSymbolHtml() {
-//     let cartSymbolContainer: HTMLDivElement = document.createElement("div");
-//     cartSymbolContainer.className = "cartSymbolContainer";
-    
-//     let cartSymbol: HTMLElement = document.createElement("i");
-//     cartSymbol.className = "bi bi-bag-plus";
-//     cartSymbolContainer.appendChild(cartSymbol);
-
-//     return cartSymbolContainer
-//   }
- 
-
-//   function createDogHtml(product: CartItem, container: HTMLElement) {
-//     let dogProduct: HTMLDivElement = document.createElement("div");
-//     let dogImgContainer: HTMLDivElement = document.createElement("div");
-//     dogImgContainer.className = "dogimgcontainer";
-//     dogProduct.appendChild(dogImgContainer);
-
-//     let dogImg: HTMLImageElement = document.createElement("img");
-//     dogImg.src = product.picture;
-//     dogImg.alt = product.pictureAlt;
-
-//     const cartSymbolContainer = createCartSymbolHtml();
-//     dogImgContainer.appendChild(cartSymbolContainer);
-
-//     dogImg.addEventListener("mouseover", () => {
-//       cartSymbolContainer.classList.add("hover");
-//       dogImg.classList.add("hover");
-//     });
-
-//     dogImg.addEventListener("mouseout", () => {
-//       dogImg.classList.remove("hover");
-//       cartSymbolContainer.classList.remove("hover");
-//     });
-
-//     dogImgContainer.appendChild(dogImg);
-
-//     return dogProduct
-//   }
-//   function createProductName(product: CartItem) {
-//     const name: HTMLHeadingElement = document.createElement('h5');
-//     name.innerHTML = product.name;
-
-//     return name;
-//   }
-   
-
-//   for (let i = 0; i < productList.length; i++) {
-    
-//     const name = createProductHtml(productList[i]);
-
-
-    
-//     dogproduct.appendChild(name);
-
-//     let price: HTMLHeadingElement = document.createElement("p");
-//     price.innerHTML = "$" + productList[i].price;
-//     dogproduct.appendChild(price);
-
-//     let info: HTMLHeadingElement = document.createElement("p");
-//     info.innerHTML = productList[i].info;
-//     dogproduct.appendChild(info);
-
-//     productList[i].productSpec = false;
-
-//     dogImg.addEventListener("click", () => {
-//       productList[i].productSpec = !productList[i].productSpec;
-//       window.location.href = "product-spec.html#backArrow";
-//       let listastext = JSON.stringify(productList);
-//       localStorage.setItem("savedList", listastext);
-//     });
-
-//     cartSymbol.addEventListener("click", () => {
-//       let cart = new Cart();
-//       cart.addToCart(i);
-//     });
-
-//     if (productList[i].category === "sassy") {
-//       let cat1: HTMLElement = document.getElementById("sassy") as HTMLElement;
-//       dogproduct.className = "dogproduct";
-//       cat1.appendChild(dogproduct);
-//     }
-//     if (productList[i].category === "kriminella") {
-//       let cat2: HTMLElement = document.getElementById(
-//         "kriminella"
-//       ) as HTMLElement;
-//       dogproduct.className = "dogproduct";
-//       cat2.appendChild(dogproduct);
-//     }
-//     if (productList[i].category == "singlar") {
-//       let cat3: HTMLElement = document.getElementById("singlar") as HTMLElement;
-//       dogproduct.className = "dogproduct";
-//       cat3.appendChild(dogproduct);
-//     }
-//     if (productList[i].category === "puppy") {
-//       let cat4: HTMLElement = document.getElementById("puppy") as HTMLElement;
-//       dogproduct.className = "dogproduct";
-//       cat4.appendChild(dogproduct);
-//     }
-//     if (productList[i].category === "oldies") {
-//       let cat5: HTMLElement = document.getElementById("oldies") as HTMLElement;
-//       dogproduct.className = "dogproduct";
-//       cat5.appendChild(dogproduct);
-//     }
-//   }
-//   let listastext = JSON.stringify(productList);
-//   localStorage.setItem("savedList", listastext);
-//   sessionStorage.clear();
-// }
+interface CartItem {
+  picture: string;
+  pictureAlt: string;
+  name: string;
+  price: number;
+  info: string;
+  productSpec: boolean;
+  category: string;
+}
 
 class Cart {
-  addToCart(i: number) {}
+  addToCart(i: number) { }
 }
-export let cartList = JSON.parse(localStorage.getItem("savedCartList") || "[]");
-export let productList = JSON.parse(localStorage.getItem("savedList") || "[]");
+export const cartList = JSON.parse(localStorage.getItem("savedCartList") || "[]");
+export const productList = JSON.parse(localStorage.getItem("savedList") || "[]");
+
+function createDogProductHtml(product: CartItem, cartSymbolContainer: HTMLDivElement) {
+  const dogProduct = document.createElement("div");
+  const dogImgContainer: HTMLDivElement = document.createElement("div");
+  dogImgContainer.className = "dogimgcontainer";
+  dogProduct.appendChild(dogImgContainer);
+  const dogImg: HTMLImageElement = document.createElement("img");
+
+  dogImg.src = product.picture;
+  dogImg.alt = product.pictureAlt;
+
+  dogImgContainer.appendChild(cartSymbolContainer);
+
+  dogImgContainer.appendChild(dogImg);
+
+  addEventlisteners(dogImg, cartSymbolContainer, product)
+
+  return dogProduct
+}
+
+function createCartSymbolHtml(i: number) {
+  const cartSymbolContainer: HTMLDivElement = document.createElement("div");
+  cartSymbolContainer.className = "cartSymbolContainer";
+  const cartSymbol: HTMLElement = document.createElement("i");
+  cartSymbol.className = "bi bi-bag-plus";
+  cartSymbolContainer.appendChild(cartSymbol);
+
+  cartSymbol.addEventListener("click", () => {
+    const cart = new Cart();
+    cart.addToCart(i);
+  });
+
+  return cartSymbolContainer
+}
+
+function addEventlisteners(dogImg: HTMLImageElement, cartSymbolContainer: HTMLDivElement, product: CartItem) {
+  dogImg.addEventListener("mouseover", () => {
+    cartSymbolContainer.classList.add("hover");
+    dogImg.classList.add("hover");
+  });
+
+  dogImg.addEventListener("mouseout", () => {
+    dogImg.classList.remove("hover");
+    cartSymbolContainer.classList.remove("hover");
+  });
+
+  dogImg.addEventListener("click", () => {
+    product.productSpec = !product.productSpec;
+    window.location.href = "product-spec.html#backArrow";
+    const listAsText = JSON.stringify(productList);
+    localStorage.setItem("savedList", listAsText);
+  });
+}
+
+function createNameHtml(product: CartItem) {
+  const name: HTMLHeadingElement = document.createElement("h5");
+  name.innerHTML = product.name;
+  return name
+}
+
+function createPriceHtml(i: number) {
+  const price: HTMLHeadingElement = document.createElement("p");
+  price.innerHTML = "$" + productList[i].price;
+  return price;
+}
+
+function createInfoHtml(product: CartItem) {
+  const info: HTMLHeadingElement = document.createElement("p");
+  info.innerHTML = product.info;
+
+  return info;
+}
+
 
 export function createProductHtml() {
   let quantity = 0;
   for (let i = 0; i < cartList.length; i++) {
     quantity += cartList[i].quantity;
   }
-  let floatingCart = document.getElementById(
+
+  const floatingCart = document.getElementById(
     "floatingcartnumber"
   ) as HTMLElement;
   floatingCart.innerHTML = "" + quantity;
 
   for (let i = 0; i < productList.length; i++) {
-    let dogproduct: HTMLDivElement = document.createElement("div");
-    let dogImgContainer: HTMLDivElement = document.createElement("div");
-    dogImgContainer.className = "dogimgcontainer";
-    dogproduct.appendChild(dogImgContainer);
-    let dogImg: HTMLImageElement = document.createElement("img");
+    const cartSymbolContainer: HTMLDivElement = createCartSymbolHtml(i);
+    const dogProduct: HTMLDivElement = createDogProductHtml(productList[i], cartSymbolContainer)
 
-    dogImg.src = productList[i].picture;
-    dogImg.alt = productList[i].pictureAlt;
+    const name = createNameHtml(productList[i]);
+    dogProduct.appendChild(name);
 
-    dogImg.addEventListener("mouseover", () => {
-      cartSymbolContainer.classList.add("hover");
-      dogImg.classList.add("hover");
-    });
+    const price = createPriceHtml(i)
+    dogProduct.appendChild(price);
 
-    dogImg.addEventListener("mouseout", () => {
-      dogImg.classList.remove("hover");
-      cartSymbolContainer.classList.remove("hover");
-    });
 
-    dogImgContainer.appendChild(dogImg);
-    let cartSymbolContainer: HTMLDivElement = document.createElement("div");
-    cartSymbolContainer.className = "cartSymbolContainer";
-    dogImgContainer.appendChild(cartSymbolContainer);
-
-    let cartSymbol: HTMLElement = document.createElement("i");
-    cartSymbol.className = "bi bi-bag-plus";
-    cartSymbolContainer.appendChild(cartSymbol);
-
-    let name: HTMLHeadingElement = document.createElement("h5");
-    name.innerHTML = productList[i].name;
-    dogproduct.appendChild(name);
-
-    let price: HTMLHeadingElement = document.createElement("p");
-    price.innerHTML = "$" + productList[i].price;
-    dogproduct.appendChild(price);
-
-    let info: HTMLHeadingElement = document.createElement("p");
-    info.innerHTML = productList[i].info;
-    dogproduct.appendChild(info);
+    const info = createInfoHtml(productList[i])
+    dogProduct.className = "dogproduct";
+    dogProduct.appendChild(info);
 
     productList[i].productSpec = false;
 
-    dogImg.addEventListener("click", () => {
-      productList[i].productSpec = !productList[i].productSpec;
-      window.location.href = "product-spec.html#backArrow";
-      let listastext = JSON.stringify(productList);
-      localStorage.setItem("savedList", listastext);
-    });
-
-    cartSymbol.addEventListener("click", () => {
-      let cart = new Cart();
-      cart.addToCart(i);
-    });
-
-    if (productList[i].category === "sassy") {
-      let cat1: HTMLElement = document.getElementById("sassy") as HTMLElement;
-      dogproduct.className = "dogproduct";
-      cat1.appendChild(dogproduct);
-    }
-    if (productList[i].category === "kriminella") {
-      let cat2: HTMLElement = document.getElementById(
-        "kriminella"
-      ) as HTMLElement;
-      dogproduct.className = "dogproduct";
-      cat2.appendChild(dogproduct);
-    }
-    if (productList[i].category == "singlar") {
-      let cat3: HTMLElement = document.getElementById("singlar") as HTMLElement;
-      dogproduct.className = "dogproduct";
-      cat3.appendChild(dogproduct);
-    }
-    if (productList[i].category === "puppy") {
-      let cat4: HTMLElement = document.getElementById("puppy") as HTMLElement;
-      dogproduct.className = "dogproduct";
-      cat4.appendChild(dogproduct);
-    }
-    if (productList[i].category === "oldies") {
-      let cat5: HTMLElement = document.getElementById("oldies") as HTMLElement;
-      dogproduct.className = "dogproduct";
-      cat5.appendChild(dogproduct);
+    switch(productList[i].category) {
+      case "sassy":
+        (document.getElementById("sassy") as HTMLElement).appendChild(dogProduct);
+      break;
+      case "kriminella":
+        (document.getElementById("kriminella") as HTMLElement).appendChild(dogProduct);
+      break;
+      case "singlar":
+        (document.getElementById("singlar") as HTMLElement).appendChild(dogProduct);
+      break;
+      case "puppy":
+        (document.getElementById("puppy") as HTMLElement).appendChild(dogProduct);
+      break;
+      case "oldies":
+        (document.getElementById("oldies") as HTMLElement).appendChild(dogProduct);
+      break;
     }
   }
-  let listastext = JSON.stringify(productList);
-  localStorage.setItem("savedList", listastext);
+  const listAsText = JSON.stringify(productList);
+  localStorage.setItem("savedList", listAsText);
   sessionStorage.clear();
 }
 
